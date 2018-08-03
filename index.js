@@ -14,6 +14,15 @@ const serverErrorMsg = () => {
 
 // ===== MIDDLEWARE =====
 
+const checkProjBody = (req, res, next) => {
+    const proj = req.body;
+    if (proj.name == null || proj.description == null) {
+        res.status(400).json({ errorMessage: 'Please be sure to include a name and description for the project' })
+    } else if (proj.name.length > 128) {
+        res.status(400).json({ errorMessage: 'Please do not have a project name greater than 128 characters' })
+    }
+    next();
+}
 
 // ===== PROJECT REQUESTS =====
 
@@ -42,6 +51,17 @@ server.get('/projects/:id', (req, res) => {
         })
 })
 
+server.post('/projects', checkProjBody, (req, res) => {
+    const proj = req.body;
+
+    projectsDb.insert(proj)
+        .then(proj => {
+            res.status(200).json(proj);
+        })
+        .catch(() => {
+            serverErrorMsg();
+        })
+})
 
 // ===== ACTION REQUESTS =====
 
