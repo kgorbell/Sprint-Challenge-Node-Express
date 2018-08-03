@@ -24,6 +24,16 @@ const checkProjBody = (req, res, next) => {
     next();
 }
 
+const checkActionBody = (req, res, next) => {
+    const action = req.body;
+    if (action.description == null || action.notes == null) {
+        res.status(400).json({ errorMessage: 'Please be sure to include notes and a description for the action' })
+    } else if (action.description.length > 128) {
+        res.status(400).json({ errorMessage: 'Please do not have an action description greater than 128 characters' })
+    }
+    next();
+}
+
 // ===== PROJECT REQUESTS =====
 
 server.get('/projects', (req, res) => {
@@ -112,7 +122,17 @@ server.get('/actions/:id', (req, res) => {
         }) 
 })
 
+server.post('/actions', checkActionBody, (req, res) => {
+   const action = req.body;
 
+   actionsDb.insert(action)
+    .then(action => {
+        res.status(200).json(action)
+    })
+    .catch(() => {
+        serverErrorMsg();
+    })
+})
 
 
 server.listen(8000, () => console.log('\n ===== API running... =====\n'))
