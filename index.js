@@ -97,6 +97,22 @@ server.put('/projects/:id', checkProjBody, (req, res) => {
 
 // ===== ACTION REQUESTS =====
 
+server.get('/actions/:id', (req, res) => {
+    const { id } = req.params;
+
+    actionsDb.get(id)
+        .then(response => {
+            if (response < 1) {
+                res.status(404).json({ message: 'the actions with the specified ID could not be found' })
+            }
+            res.status(200).json(response);
+        })
+        .catch(() => {
+            serverErrorMsg();
+        }) 
+})
+
+
 
 
 server.listen(8000, () => console.log('\n ===== API running... =====\n'))
