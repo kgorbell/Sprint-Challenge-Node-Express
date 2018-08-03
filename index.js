@@ -134,5 +134,20 @@ server.post('/actions', checkActionBody, (req, res) => {
     })
 })
 
+server.delete('/actions/:id', (req, res) => {
+    const { id } = req.params;
+
+    actionsDb.remove(id)
+        .then( response => {
+            if (response < 1) {
+                res.status(404).json({ message: 'The action with the specified ID could not be found' })
+            }
+            res.status(200).json(response);
+        })
+        .catch(() => {
+            serverErrorMsg();
+        })
+})
+
 
 server.listen(8000, () => console.log('\n ===== API running... =====\n'))
