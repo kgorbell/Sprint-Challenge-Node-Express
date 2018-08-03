@@ -63,6 +63,24 @@ server.post('/projects', checkProjBody, (req, res) => {
         })
 })
 
+server.delete('/projects/:id', (req, res) => {
+    const { id } = req.params;
+
+    projectsDb.remove(id)
+        .then(response => {
+            if (response < 1) {
+                res.status(404).json({ message: 'the specified project could not be found' })
+            }
+            res.status(200).json(response);
+        })
+        .catch(() => {
+            serverErrorMsg();
+        })
+})
+
+
+
+
 // ===== ACTION REQUESTS =====
 
 
